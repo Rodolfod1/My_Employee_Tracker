@@ -102,3 +102,8 @@ dist
 
 # TernJS port file
 .tern-port
+
+# customized
+Rubric.md
+Assets/schema.png
+Assets/employee-tracker.gif
