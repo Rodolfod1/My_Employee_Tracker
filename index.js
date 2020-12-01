@@ -1,15 +1,12 @@
 var mysql = require ("mysql");
 var inquirer = require ("inquirer");
 // opening the connection to mysql
-
 var check = mysql.createConnection({
     host: "localhost",
     // Your port; if not 3306
   port: 3306,
-
   // Your username
   user: "root",
-
   // Your password to your SQL 
   password: "N12rocks@01",
   database: "Mgmt_systDB"
@@ -18,7 +15,6 @@ check.connect(function(err){
     if (err) throw err;
     init();
 });
-
 // generic questions as initial landing option 
 const Question = [
     { type:"list",
@@ -32,7 +28,8 @@ const Question = [
             "Update Employee Details",
             "Update Employee Managers",
             "View Budget by Department",
-            "Danger Zone - DELETE (Employee / Manager / Department)"
+            "Danger Zone - DELETE (Employee / Manager / Department)",
+            "Exit"
         ]
 }];
 // specific question when adding an employee
@@ -47,9 +44,41 @@ const AddEmp = [
      message:"Please Provide Manager ID# Leave Blank and Hit Enter If Employee Is A Manager:"
     }
 ]
-
 const init = async ()=>{
     const{Optn} =await inquirer.prompt(Question);
-    console.log(Optn);
+    switch(Optn){
+        case "Add New Employees":
+            CreateEmployee();
+            break;
+        case "View All Departments With Roles and Employees":
+            ViewDepartment();
+            break;
+        case "View All Employees":
+            ViewAll();
+            break;
+        case "View Employees By Manager":
+            MgrView();
+            break;
+        case "Update Employee Details":
+            EmployeeEdit();
+            break;
+        case "Update Employee Managers":
+            MgrEdit();
+            break;
+        case "View Budget by Department":
+            BudgetView();
+            break;
+        case "Danger Zone - DELETE (Employee / Manager / Department)":
+            ActionDelete();
+            break;
+        case "Exit":
+            ActionLeave();
+            break;
+    }
 }
-
+// Exiting the program 
+const  ActionLeave = () => {
+ console.log("GoodBye");
+ check.end();
+ return;
+}
