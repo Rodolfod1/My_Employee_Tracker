@@ -1,7 +1,7 @@
 var mysql = require ("mysql");
 var inquirer = require ("inquirer");
 // opening the connection to mysql
-var check = mysql.createConnection({
+var connection = mysql.createConnection({
     host: "localhost",
     // Your port; if not 3306
   port: 3306,
@@ -11,7 +11,7 @@ var check = mysql.createConnection({
   password: "N12rocks@01",
   database: "Mgmt_systDB"
 });
-check.connect(function(err){
+connection.connect(function(err){
     if (err) throw err;
     init();
 });
@@ -34,14 +34,13 @@ const Question = [
 }];
 // specific question when adding an employee
 const AddEmp = [
-    {message:" Provide Employee First Name:", name:"FirstName",
-     message:" Provide Employee Last Name:", name:"LastName",
-     message:" New Employee Department#:", name:"DepartmentNo",
-     message:" New Employee Title:", name:"Title",
-     message:" Provide RoleID# :", name:"RoleId",
-     message:" Please Provide Employee Salary:", name:"Salary",
-    // message:"Please Provide Manager ID#  Enter (00) If Employee Is A Manager:",
-     message:"Please Provide Manager ID# Leave Blank and Hit Enter If Employee Is A Manager:"
+    {message:" Provide Employee First Name:", name:"FirstName"},
+     {message:" Provide Employee Last Name:", name:"LastName"},
+     {message:" New Employee Department#:", name:"DepartmentNo"},
+     {message:" New Employee Title:", name:"Title"},
+     {message:" Provide RoleID# :", name:"RoleId"},
+     {message:" Please Provide Employee Salary:", name:"Salary"},
+     {message:"Please Provide Manager ID# Leave Blank If Employee Is A Manager:", name:"IsManager"
     }
 ]
 const init = async ()=>{
@@ -76,9 +75,24 @@ const init = async ()=>{
             break;
     }
 }
+// calling functions 
+const CreateEmployee = async ()=> {
+    const {FirstName,LastName,DepartmentNo,Title,RoleId,Salary,IsManager}= await inquirer.prompt(AddEmp);
+    connection.query("INSERT INTO employee SET ?",{
+        first_name: FirstName,
+        last_name: LastName,
+        role_id: RoleId,
+        manager_id: IsManager
+
+     })
+ActionLeave()
+
+
+}
+
 // Exiting the program 
 const  ActionLeave = () => {
  console.log("GoodBye");
- check.end();
+ connection.end();
  return;
 }
