@@ -17,8 +17,8 @@ id INT NOT NULL,
 );
 -- creating first table for employee 
 create table employee(
-id INT NOT NULL, 
-		fist_name varchar (30) null,
+id INT auto_increment NOT NULL, 
+		first_name varchar (30) null,
         last_name varchar (30) null, 
 		role_id int not null,
         manager_id int null,

@@ -81,9 +81,8 @@ const CreateEmployee = async ()=> {
     connection.query("INSERT INTO employee SET ?",{
         first_name: FirstName,
         last_name: LastName,
-        role_id: RoleId,
-        manager_id: IsManager
-
+        role_id:parseInt(RoleId),
+        manager_id:parseInt(IsManager)
      })
 ActionLeave()
 
