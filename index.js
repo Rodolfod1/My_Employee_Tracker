@@ -20,17 +20,8 @@ const Question = [
     { type:"list",
         message: "what would you like to do ?",
         name:"Optn",
-        choices:[
-            "Add New Employees",
-            "View All Departments With Roles and Employees",
-            "View All Employees",
-            "View Employees By Manager",
-            "Update Employee Details",
-            "Update Employee Managers",
-            "View Budget by Department",
-            "Danger Zone - DELETE (Employee / Manager / Department)",
-            "Exit"
-        ]
+        choices:["Add New Employees", "Add Departments","Add New Roles", "Edit Employee Details","Update Employee Managers","View All ","View Employees By Manager","View Budget by Department","Danger Zone - DELETE (Employee / Manager / Department)","Exit"],
+        pageSize: 10        
 }];
 // specific question when adding an employee
 const AddEmp = [
@@ -78,11 +69,18 @@ const init = async ()=>{
 // calling functions 
 const CreateEmployee = async ()=> {
     const {FirstName,LastName,DepartmentNo,Title,RoleId,Salary,IsManager}= await inquirer.prompt(AddEmp);
+    //query to fill in the employee table 
     connection.query("INSERT INTO employee SET ?",{
         first_name: FirstName,
         last_name: LastName,
         role_id:parseInt(RoleId),
         manager_id:parseInt(IsManager)
+     })
+     //query to fill in the  roletable 
+     connection.query("INSERT INTO roletable SET ?",{
+         title: Title,
+         salary: Salary,
+         department_id: DepartmentNo,
      })
 ActionLeave()
 
