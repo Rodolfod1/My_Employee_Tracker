@@ -1,6 +1,7 @@
 var mysql = require ("mysql");
 var inquirer = require ("inquirer");
 var Prnt= require("asciiart-logo");
+require("console.table");
 // opening the connection to mysql
 var connection = mysql.createConnection({
     host: "localhost",

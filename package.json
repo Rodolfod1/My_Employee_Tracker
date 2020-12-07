@@ -18,8 +18,10 @@
   "homepage": "https://github.com/Rodolfod1/My_Employee_Tracker#readme",
   "dependencies": {
     "asciiart-logo": "^0.2.6",
+    "console.table": "^0.10.0",
     "express": "^4.17.1",
     "inquirer": "^7.3.3",
-    "mysql": "^2.18.1"
+    "mysql": "^2.18.1",
+    "save": "^2.4.0"
   }
 }
