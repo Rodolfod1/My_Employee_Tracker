@@ -1,30 +1,28 @@
-drop database if exists Mgmt_systDB;
-create database	Mgmt_systDB;
-use Mgmt_systDB;
+DROP DATABASE IF EXISTS Mgmt_systDB;
+CREATE DATABASE	Mgmt_systDB;
+USE Mgmt_systDB;
 -- creating first table for department 
-create table department(
-	department_id INT auto_increment NOT NULL, 
-		name varchar (30) null, 
-		primary key (department_id)
+CREATE TABLE department(
+	department_id INT AUTO_INCREMENT NOT NULL PRIMARY KEY, 
+	NAME VARCHAR (30) NULL 
 );
 -- creating first table for Role called RoleTable
-create table RoleTable(
-		role_id INT auto_increment NOT NULL primary key, 
-		title varchar (30) null, 
-		salary decimal (10,4) null,
-        department_id int,
+CREATE TABLE RoleTable(
+		role_id INT AUTO_INCREMENT NOT NULL PRIMARY KEY, 
+		title VARCHAR (30) NULL, 
+		salary DECIMAL (7,2) NULL,
+        department_id INT,
        foreign key (department_id) references department(department_id) on delete set null
 );
 -- creating first table for employee 
 create table employee(
-id INT auto_increment NOT NULL primary key, 
-		first_name varchar (30) null,
-        last_name varchar (30) null, 
-	 	role_id int, 
-        manager_id int,
-       foreign key (role_id) references Roletable(role_id) on delete set null,
-       foreign key (manager_id) references employee(id) on delete set null
-       
+   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    first_name VARCHAR(30) NOT NULL,
+    last_name VARCHAR(30) NOT NULL,
+    role_id INT NOT NULL,
+    FOREIGN KEY (role_id) REFERENCES RoleTable(role_id) ON DELETE CASCADE,
+    manager_id INT UNSIGNED,
+    FOREIGN KEY (manager_id) REFERENCES employee(id) ON DELETE SET NULL
 );
 -- select from the three tables above
 select * from department;

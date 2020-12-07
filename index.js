@@ -1,5 +1,6 @@
 var mysql = require ("mysql");
 var inquirer = require ("inquirer");
+var Prnt= require("asciiart-logo");
 // opening the connection to mysql
 var connection = mysql.createConnection({
     host: "localhost",
@@ -13,8 +14,15 @@ var connection = mysql.createConnection({
 });
 connection.connect(function(err){
     if (err) throw err;
-    init();
+    Welcome();
+    
 });
+
+function Welcome() {
+    const Msgr= Prnt({ name: "Welcome  .  to    Employee Manager :" }).render();
+    console.log(Msgr);
+    init();
+}
 // generic questions as initial landing option 
 const Question = [
     { type:"list",
@@ -33,7 +41,8 @@ const AddEmp = [
      {message:" Please Provide Employee Salary:", name:"Salary"},
      {message:"Please Provide Manager ID# Leave Blank If Employee Is A Manager:", name:"IsManager"
     }
-]
+];
+
 const init = async ()=>{
     const{Optn} =await inquirer.prompt(Question);
     switch(Optn){
@@ -83,7 +92,6 @@ const CreateEmployee = async ()=> {
          department_id: DepartmentNo,
      })
 ActionLeave()
-
 
 }
 

@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/Rodolfod1/My_Employee_Tracker#readme",
   "dependencies": {
+    "asciiart-logo": "^0.2.6",
     "express": "^4.17.1",
     "inquirer": "^7.3.3",
     "mysql": "^2.18.1"
