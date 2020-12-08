@@ -43,7 +43,7 @@ const AddEmp = [
      {message:"Please Provide Manager ID# Leave Blank If Employee Is A Manager:", name:"IsManager"
     }
 ];
-
+// Main Function 
 const init = async ()=>{
     const{Optn} =await inquirer.prompt(Question);
     switch(Optn){
@@ -76,7 +76,32 @@ const init = async ()=>{
             break;
     }
 }
-// calling functions 
+// calling functions
+//function to get the names from the database and assigned it to an array for manipulation  
+const EmpNames = () => {
+    connection.query( `SELECT CONCAT(first_name," ",last_name) FROM employee;`,
+    function(err,res){
+        if (err) throw err;
+        var EmpList=[];
+        for (i=0; i < res.length; i++){
+            EmpList.push(res[i]["CONCAT(first_name,' ',last_name)"]);
+        }
+        return EmpList;
+    });
+}
+//function to get departments for future manipulation 
+const  DepList=()=>{
+    connection.query(`SELECT NAME FROM department;`,
+    function(err,res){
+        if (err) throw err;
+        var Depos=[];
+        for (i=0; i<res.length; i++){
+            Depos.push(res[i][NAME]);
+        }
+        return Depos;
+    });
+}
+// function to create a new employee 
 const CreateEmployee = async ()=> {
     const {FirstName,LastName,DepartmentNo,Title,RoleId,Salary,IsManager}= await inquirer.prompt(AddEmp);
     //query to fill in the employee table 
@@ -92,6 +117,7 @@ const CreateEmployee = async ()=> {
          salary: Salary,
          department_id: DepartmentNo,
      })
+     console.log("Employee Added! ");
 init();
 }
 // function to see all employees
@@ -105,8 +131,7 @@ const ViewAll = () => {
             console.table(res);
             //the call to the main menu must be here to render correctly 
             init();   
-        });
-    
+        });  
 }
 
 // Exiting the program 
