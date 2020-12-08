@@ -29,7 +29,7 @@ const Question = [
     { type:"list",
         message: "what would you like to do ?",
         name:"Optn",
-        choices:["Add New Employees", "Add Departments","Add New Roles", "Edit Employee Details","Update Employee Managers","View All ","View Employees By Manager","View Budget by Department","Danger Zone - DELETE (Employee / Manager / Department)","Exit"],
+        choices:["Add New Employees", "Add Departments","Add New Roles", "Edit Employee Details","Update Employee Managers","View All","View Employees By Manager","View Budget by Department","Danger Zone - DELETE (Employee / Manager / Department)","Exit"],
         pageSize: 10        
 }];
 // specific question when adding an employee
@@ -53,7 +53,7 @@ const init = async ()=>{
         case "View All Departments With Roles and Employees":
             ViewDepartment();
             break;
-        case "View All Employees":
+        case "View All":
             ViewAll();
             break;
         case "View Employees By Manager":
@@ -92,8 +92,21 @@ const CreateEmployee = async ()=> {
          salary: Salary,
          department_id: DepartmentNo,
      })
-ActionLeave()
-
+init();
+}
+// function to see all employees
+const ViewAll = () => {
+    connection.query(`SELECT employee.id, employee.first_name AS FIRST, employee.last_name AS LAST,
+    RoleTable.title AS ROLE, department.NAME AS DEPARTMENT, RoleTable.salary AS SALARY,
+    CONCAT (managers.first_name," ",managers.last_name) AS MANAGER FROM RoleTable INNER JOIN employee ON employee.role_id=RoleTable.role_id
+    INNER JOIN department on department.department_id=RoleTable.department_id LEFT JOIN employee as MANAGERS ON employee.manager_id=managers.id ORDER BY employee.id;`,
+        function(err,res){
+            if (err) throw err;
+            console.table(res);
+            //the call to the main menu must be here to render correctly 
+            init();   
+        });
+    
 }
 
 // Exiting the program 
@@ -102,3 +115,4 @@ const  ActionLeave = () => {
  connection.end();
  return;
 }
+  
