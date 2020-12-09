@@ -29,7 +29,7 @@ const Question = [
     { type:"list",
         message: "what would you like to do ?",
         name:"Optn",
-        choices:["Add New Employees", "Add Departments","Add New Roles", "Edit Employee Details","Update Employee Managers","View All","View Employees By Manager","View Budget by Department","Danger Zone - DELETE (Employee / Manager / Department)","Exit"],
+        choices:["Add New Employees", "Add New Department","Add New Roles", "Edit Employee Details","Update Employee Managers","View All","View Employees By Manager","View Budget by Department","Danger Zone - DELETE (Employee / Manager / Department)","Exit"],
         pageSize: 10        
 }];
 // specific question when adding an employee
@@ -47,11 +47,14 @@ const AddEmp = [
 const init = async ()=>{
     const{Optn} =await inquirer.prompt(Question);
     switch(Optn){
+        case "Add New Department":
+            AddDepo();
+            break;
         case "Add New Employees":
             CreateEmployee();
             break;
         case "View All Departments With Roles and Employees":
-            ViewDepartment();
+            ViewDepoNroles();
             break;
         case "View All":
             ViewAll();
@@ -79,24 +82,24 @@ const init = async ()=>{
 // calling functions
 //function to get the names from the database and assigned it to an array for manipulation  
 const EmpNames = () => {
-    connection.query( `SELECT CONCAT(first_name," ",last_name) FROM employee;`,
+    connection.query( `SELECT CONCAT(first_name," ",last_name) as FullName FROM employee;`,
     function(err,res){
         if (err) throw err;
         var EmpList=[];
         for (i=0; i < res.length; i++){
-            EmpList.push(res[i]["CONCAT(first_name,' ',last_name)"]);
+            EmpList.push(res[i].FullName);
         }
         return EmpList;
     });
 }
 //function to get departments for future manipulation 
-const  DepList=()=>{
-    connection.query(`SELECT NAME FROM department;`,
+const  DepList=()=>{   
+    connection.query(`SELECT NAME FROM department;`,     
     function(err,res){
         if (err) throw err;
         var Depos=[];
         for (i=0; i<res.length; i++){
-            Depos.push(res[i][NAME]);
+            Depos.push(res[i].NAME);
         }
         return Depos;
     });
@@ -133,7 +136,24 @@ const ViewAll = () => {
             init();   
         });  
 }
+// function to add a new department 
+const AddDepo = async (err,res) =>{
+    console.log("HERE");
+    if (err) throw err;
+    const {NewDep} = await inquirer.prompt({message:"What's the new department name? ", name:"NewDep"});
+    connection.query(`INSERT INTO department SET?`,{NAME:NewDep});
+    console.log("New Department Added");
+    viewdeps();
+}
+const viewdeps= ()=>{
 
+    connection.query(`SELECT department.department_id, department.NAME as Department FROM department`,
+    function (err,res) {
+        if (err) throw err;
+        console.table(res);
+        init();
+    });
+}
 // Exiting the program 
 const  ActionLeave = () => {
  console.log("GoodBye");
