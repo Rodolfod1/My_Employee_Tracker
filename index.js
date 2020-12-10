@@ -2,6 +2,9 @@ var mysql = require ("mysql");
 var inquirer = require ("inquirer");
 var Prnt= require("asciiart-logo");
 require("console.table");
+var Depos=[];
+var EmpList=[];
+
 // opening the connection to mysql
 var connection = mysql.createConnection({
     host: "localhost",
@@ -22,6 +25,8 @@ connection.connect(function(err){
 function Welcome() {
     const Msgr= Prnt({ name: "Welcome  .  to    Employee Manager :" }).render();
     console.log(Msgr);
+    DepList();
+    EmpNames();
     init();
 }
 // generic questions as initial landing option 
@@ -52,6 +57,9 @@ const init = async ()=>{
             break;
         case "Add New Employees":
             CreateEmployee();
+            break;
+        case "Add New Roles":
+            AddRole();
             break;
         case "View All Departments With Roles and Employees":
             ViewDepoNroles();
@@ -85,7 +93,7 @@ const EmpNames = () => {
     connection.query( `SELECT CONCAT(first_name," ",last_name) as FullName FROM employee;`,
     function(err,res){
         if (err) throw err;
-        var EmpList=[];
+        
         for (i=0; i < res.length; i++){
             EmpList.push(res[i].FullName);
         }
@@ -97,11 +105,10 @@ const  DepList=()=>{
     connection.query(`SELECT NAME FROM department;`,     
     function(err,res){
         if (err) throw err;
-        var Depos=[];
         for (i=0; i<res.length; i++){
             Depos.push(res[i].NAME);
         }
-        return Depos;
+         return Depos;
     });
 }
 // function to create a new employee 
@@ -138,7 +145,6 @@ const ViewAll = () => {
 }
 // function to add a new department 
 const AddDepo = async (err,res) =>{
-    console.log("HERE");
     if (err) throw err;
     const {NewDep} = await inquirer.prompt({message:"What's the new department name? ", name:"NewDep"});
     connection.query(`INSERT INTO department SET?`,{NAME:NewDep});
@@ -146,13 +152,44 @@ const AddDepo = async (err,res) =>{
     viewdeps();
 }
 const viewdeps= ()=>{
-
     connection.query(`SELECT department.department_id, department.NAME as Department FROM department`,
     function (err,res) {
         if (err) throw err;
         console.table(res);
         init();
     });
+}
+const AddRole = async () => {
+    const{NewRole,Depo,Salary}= await inquirer.prompt( [{message:"Please provide new Role:", name:"NewRole"},
+    {type:"list", message:"Which Department this belong to? please select:", name:"Depo", choices:Depos},
+    {message:"Please Provide Salary: ", name:"Salary" }]);
+    //making query to retrive role_id 
+    connection.query(`SELECT department_id FROM department WHERE?`, {NAME:Depo}, function(err,res){
+        if (err) throw err;
+        let dpId=parseInt(res[0].department_id)
+        // writing the selection to database 
+    connection.query(`INSERT INTO RoleTable SET?`,{
+        title:NewRole,
+        salary:parseInt(Salary),
+        department_id:dpId
+        });
+    console.log("New Department Added!");
+    ViewRoles();
+    
+   
+        });
+ 
+}
+
+
+// function to display existing roles
+const ViewRoles = () =>{
+    connection.query(`SELECT roletable.role_id, roletable.title as Role FROM RoleTable`, function(err,res){
+        if (err) throw err;
+        console.table(res);
+        init();
+          });
+          
 }
 // Exiting the program 
 const  ActionLeave = () => {
