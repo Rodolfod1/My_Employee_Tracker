@@ -19,7 +19,6 @@ var connection = mysql.createConnection({
 connection.connect(function(err){
     if (err) throw err;
     Welcome();
-    
 });
 
 function Welcome() {
@@ -175,13 +174,8 @@ const AddRole = async () => {
         });
     console.log("New Department Added!");
     ViewRoles();
-    
-   
         });
- 
 }
-
-
 // function to display existing roles
 const ViewRoles = () =>{
     connection.query(`SELECT roletable.role_id, roletable.title as Role FROM RoleTable`, function(err,res){
