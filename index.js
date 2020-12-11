@@ -5,7 +5,7 @@ require("console.table");
 var Depos=[];
 var EmpList=[];
 var Mgrs=[];
-var TableOfRoles,EmpChart,Titles=[];
+var DepTable,TableOfRoles,EmpChart,Titles=[];
 // opening the connection to mysql
 var connection = mysql.createConnection({
     host: "localhost",
@@ -116,11 +116,12 @@ const EmpNames = () => {
 }
 //function to get departments for future manipulation 
 const  DepList=()=>{   
-    connection.query(`SELECT NAME FROM department;`,     
+    connection.query(`SELECT department_id,NAME FROM department;`,     
     function(err,res){
         if (err) throw err;
-        for (i=0; i<res.length; i++){
-            Depos.push(res[i].NAME);
+        DepTable=res;
+        for (i=0; i<DepTable.length; i++){
+            Depos.push(DepTable[i].NAME);
         }
          return Depos;
     });
@@ -266,10 +267,23 @@ const GetRid = async()=>{
         init();
     })
 }
+// budget view by department 
+const BudgetView= async ()=>{
+    console.table(DepTable);
+
+    const{DP}=await inquirer.prompt([{message:"Please select the department Id#:", name:"DP"}]);
+        connection.query(`SELECT SUM(RoleTable.salary) AS Budget FROM RoleTable INNER JOIN employee ON employee.role_id = RoleTable.role_id INNER JOIN department ON department.department_id=RoleTable.department_id WHERE department.department_id= ${DP}`,
+         (err,res)=>{
+            if (err) throw err;
+            console.table(res);
+
+
+    init();
+        });
+}
 // Exiting the program 
 const  ActionLeave = () => {
  console.log("GoodBye");
  connection.end();
  return;
 }
-    
