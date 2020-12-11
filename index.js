@@ -14,7 +14,7 @@ var connection = mysql.createConnection({
   // Your username
   user: "root",
   // Your password to your SQL 
-  password: "N12rocks@01",
+  password: "rootroot",
   database: "Mgmt_systDB"
 });
 connection.connect(function(err){
@@ -270,16 +270,13 @@ const GetRid = async()=>{
 // budget view by department 
 const BudgetView= async ()=>{
     console.table(DepTable);
-
     const{DP}=await inquirer.prompt([{message:"Please select the department Id#:", name:"DP"}]);
         connection.query(`SELECT SUM(RoleTable.salary) AS Budget FROM RoleTable INNER JOIN employee ON employee.role_id = RoleTable.role_id INNER JOIN department ON department.department_id=RoleTable.department_id WHERE department.department_id= ${DP}`,
          (err,res)=>{
             if (err) throw err;
             console.table(res);
-
-
     init();
-        });
+     });
 }
 // Exiting the program 
 const  ActionLeave = () => {
