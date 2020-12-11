@@ -5,6 +5,7 @@ require("console.table");
 var Depos=[];
 var EmpList=[];
 var Mgrs=[];
+var TableOfRoles,EmpChart,Titles=[];
 // opening the connection to mysql
 var connection = mysql.createConnection({
     host: "localhost",
@@ -24,7 +25,9 @@ connection.connect(function(err){
 function Welcome() {
     const Msgr= Prnt({ name: "Welcome  .  to    Employee Manager :" }).render();
     console.log(Msgr);
+    RoleList();
     DepList();
+    EmpIds();
     EmpNames();
     MgrLst();
     init();
@@ -34,7 +37,7 @@ const Question = [
     { type:"list",
         message: "what would you like to do ?",
         name:"Optn",
-        choices:["Add New Employees", "Add New Department","Add New Roles", "Edit Employee Details","Update Employee Managers","View All","View Employees By Manager","View Budget by Department","Danger Zone - DELETE (Employee / Manager / Department)","Exit"],
+        choices:["Add New Employees", "Add New Department","Add New Roles", "Update Employee Role","Update Employee Managers","View All","View Employees By Manager","View Roles","View Budget by Department","Danger Zone - DELETE (Employee / Manager / Department)","Exit"],
         pageSize: 10        
 }];
 // specific question when adding an employee
@@ -70,7 +73,10 @@ const init = async ()=>{
         case "View Employees By Manager":
             MgrView();
             break;
-        case "Update Employee Details":
+        case "View Roles":
+            RoleView();
+            break;
+        case "Update Employee Role":
             EmployeeEdit();
             break;
         case "Update Employee Managers":
@@ -87,7 +93,15 @@ const init = async ()=>{
             break;
     }
 }
-// calling functions
+// Auxiliary Functions 
+// view table of employee names and IDs
+const EmpIds= () =>{
+    connection.query(`SELECT id, CONCAT(first_name," ",last_name) AS Name FROM employee`,function (err,res){
+    if (err) throw err;
+     EmpChart= res;
+     });
+     return EmpChart;
+    }
 //function to get the names from the database and assigned it to an array for manipulation  
 const EmpNames = () => {
     connection.query( `SELECT CONCAT(first_name," ",last_name) as FullName FROM employee;`,
@@ -120,6 +134,25 @@ const MgrLst = ()=> {
     }
        return Mgrs;
     });
+}
+//
+const RoleList = () => {
+    console.log("got here");
+    connection.query(`SELECT role_id, title AS Role FROM RoleTable`, function(err,res){
+       if (err) throw err;
+      TableOfRoles= res;
+        for (i=0; i<TableOfRoles.length; i++){
+            Titles.push(TableOfRoles[i].title);
+         }
+        return TableOfRoles,Titles;
+     })
+    
+}
+/// Here are the main functions 
+//function to view a table of roles
+const RoleView = () => {
+    console.table(TableOfRoles);
+    init();
 }
 // function to create a new employee 
 const CreateEmployee = async ()=> {
@@ -210,10 +243,23 @@ const MgrView = async ()=> {
         });
     });
 }
+// updating employee roles 
+const EmployeeEdit = async ()=>{
+    console.table(EmpChart);
+    const {mod} = await inquirer.prompt([{message:"Please type the ID of the Employee to update: ",name:"mod"}]);
+    console.table(TableOfRoles);
+    const {NewRole}= await inquirer.prompt([{message:"Select the new Role",name:"NewRole"}]);
+    // setting updated role on employee table 
+    connection.query('UPDATE employee SET? WHERE?',[{role_id:NewRole},{id:mod}],function(err,res){
+        if (err) throw err;
+        console.log("Employee Updated!");
+    })
+    init();
+}
 // Exiting the program 
 const  ActionLeave = () => {
  console.log("GoodBye");
  connection.end();
  return;
 }
-  
+    
