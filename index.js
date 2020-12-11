@@ -37,7 +37,7 @@ const Question = [
     { type:"list",
         message: "what would you like to do ?",
         name:"Optn",
-        choices:["Add New Employees", "Add New Department","Add New Roles", "Update Employee Role","Update Employee Managers","View All","View Employees By Manager","View Roles","View Budget by Department","Danger Zone - DELETE (Employee / Manager / Department)","Exit"],
+        choices:["Add New Employees", "Add New Department","Add New Roles", "Update Employee Role","Update Employee Managers","View All","View Employees By Manager","View Roles","View Budget by Department","Danger Zone - DELETE Employee","Exit"],
         pageSize: 10        
 }];
 // specific question when adding an employee
@@ -85,8 +85,8 @@ const init = async ()=>{
         case "View Budget by Department":
             BudgetView();
             break;
-        case "Danger Zone - DELETE (Employee / Manager / Department)":
-            ActionDelete();
+        case "Danger Zone - DELETE Employee":
+            GetRid();
             break;
         case "Exit":
             ActionLeave();
@@ -255,6 +255,16 @@ const EmployeeEdit = async ()=>{
         console.log("Employee Updated!");
     })
     init();
+}
+// function for deleting employees
+const GetRid = async()=>{
+    console.table(EmpChart);
+    const {out} = await inquirer.prompt([{message:"Please type the ID of the Employee to DELETE: ",name:"out"}]);
+    connection.query(`DELETE FROM employee WHERE?`,{id:out},function(err,res){
+        if (err) throw err;
+        console.log("Success!");
+        init();
+    })
 }
 // Exiting the program 
 const  ActionLeave = () => {
