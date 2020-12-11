@@ -4,7 +4,7 @@ var Prnt= require("asciiart-logo");
 require("console.table");
 var Depos=[];
 var EmpList=[];
-
+var Mgrs=[];
 // opening the connection to mysql
 var connection = mysql.createConnection({
     host: "localhost",
@@ -26,6 +26,7 @@ function Welcome() {
     console.log(Msgr);
     DepList();
     EmpNames();
+    MgrLst();
     init();
 }
 // generic questions as initial landing option 
@@ -110,6 +111,16 @@ const  DepList=()=>{
          return Depos;
     });
 }
+    //creating a list of managers 
+const MgrLst = ()=> {    
+    connection.query(`SELECT last_name FROM employee WHERE?`,{role_id:4},function(err,res){
+        if (err) throw err;
+        for (i=0; i<res.length; i++){
+            Mgrs.push(res[i].last_name);
+    }
+       return Mgrs;
+    });
+}
 // function to create a new employee 
 const CreateEmployee = async ()=> {
     const {FirstName,LastName,DepartmentNo,Title,RoleId,Salary,IsManager}= await inquirer.prompt(AddEmp);
@@ -182,8 +193,22 @@ const ViewRoles = () =>{
         if (err) throw err;
         console.table(res);
         init();
-          });
-          
+          });        
+}
+//function to display the employees by manager 
+const MgrView = async ()=> {
+    const{manager}= await inquirer.prompt([{type:"list", message:"Please select the Manager Last Name:", name:"manager", choices:Mgrs}]);
+    // selecting the manager ID of that specific Manager 
+    connection.query(`SELECT id FROM employee WHERE?`,{last_name:manager},function (err,res){
+        if (err)throw err;
+        var Mid = res[0].id; 
+        console.log(Mid);
+        connection.query(`SELECT id, concat(first_name," ",last_name) as Name from employee where?`,{manager_id:Mid}, function(err,res){
+            if (err) throw err;
+            console.table(res);
+            init ();
+        });
+    });
 }
 // Exiting the program 
 const  ActionLeave = () => {
